@@ -1,0 +1,8 @@
+{
+  "name": "CorePick - AI Inference Performance Intelligence",
+  "description": "AI Inference Performance & Optimization Platform. Determine, predict, benchmark, and optimize the best inference configuration for any model, workload, hardware, and SLO target.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
