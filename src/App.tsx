@@ -42,7 +42,7 @@ import { WhatIfSimulatorView } from './components/WhatIfSimulatorView';
 import { BenchmarkDatabaseView } from './components/BenchmarkDatabaseView';
 import { OptimizationLabView } from './components/OptimizationLabView';
 import { ProductionMonitorView } from './components/ProductionMonitorView';
-import { AiAdvisorDrawer } from './components/AiAdvisorDrawer';
+import { DisclaimerView } from './components/DisclaimerView';
 import { OptimizationJob, ModelArchitecture } from './types';
 import { SAMPLE_OPTIMIZATION_JOBS, MODEL_CATALOG } from './data/mockData';
 
@@ -54,13 +54,6 @@ export default function App() {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState<boolean>(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
-  const [isAiAdvisorOpen, setIsAiAdvisorOpen] = useState<boolean>(false);
-  const [advisorInitialPrompt, setAdvisorInitialPrompt] = useState<string | undefined>(undefined);
-
-  const handleOpenAdvisor = (prompt?: string) => {
-    setAdvisorInitialPrompt(prompt);
-    setIsAiAdvisorOpen(true);
-  };
 
   // Helper to determine if we are in the workspace application mode
   const isAppMode = currentView.startsWith('app-');
@@ -95,7 +88,6 @@ export default function App() {
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenGlossary={() => setIsGlossaryOpen(true)}
         onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-        onOpenAdvisor={() => handleOpenAdvisor()}
       />
 
       {/* Global Command Palette (Cmd + K) */}
@@ -133,9 +125,10 @@ export default function App() {
           {currentView === 'how-it-works' && <HowItWorksView onNavigate={handleNavigate} />}
           {currentView === 'docs' && <DocsView onNavigate={handleNavigate} />}
           {currentView === 'about' && <AboutContactView onNavigate={handleNavigate} />}
-          {currentView === 'contact' && <ContactUsView onNavigate={handleNavigate} />}
+          {(currentView === 'contact' || currentView === 'app-contact') && <ContactUsView onNavigate={handleNavigate} />}
           {currentView === 'benchmarks' && <BenchmarkComparisonView onNavigate={handleNavigate} />}
           {currentView === 'knowledge-base' && <KnowledgeBaseView onNavigate={handleNavigate} onOpenWizardWithModel={handleOpenWizardWithModel} />}
+          {currentView === 'disclaimer' && <DisclaimerView onNavigate={handleNavigate} />}
 
           {/* App / Workspace Views */}
           {currentView === 'app-dashboard' && (
@@ -170,7 +163,6 @@ export default function App() {
           {currentView === 'app-optimizer' && (
             <UnifiedOptimizerView
               onNavigate={handleNavigate}
-              onOpenAdvisor={handleOpenAdvisor}
             />
           )}
 
@@ -178,7 +170,6 @@ export default function App() {
           {currentView === 'app-simulator' && (
             <WhatIfSimulatorView
               onNavigate={handleNavigate}
-              onOpenAdvisor={handleOpenAdvisor}
             />
           )}
 
@@ -186,7 +177,6 @@ export default function App() {
           {(currentView === 'app-benchmarks' || currentView === 'benchmarks') && (
             <BenchmarkDatabaseView
               onNavigate={handleNavigate}
-              onOpenAdvisor={handleOpenAdvisor}
             />
           )}
 
@@ -194,7 +184,6 @@ export default function App() {
           {currentView === 'app-opt-lab' && (
             <OptimizationLabView
               onNavigate={handleNavigate}
-              onOpenAdvisor={handleOpenAdvisor}
             />
           )}
 
@@ -202,7 +191,6 @@ export default function App() {
           {currentView === 'app-monitor' && (
             <ProductionMonitorView
               onNavigate={handleNavigate}
-              onOpenAdvisor={handleOpenAdvisor}
             />
           )}
 
@@ -333,15 +321,16 @@ export default function App() {
           {currentView === 'app-admin' && (
             <AdminFleetView onNavigate={handleNavigate} />
           )}
+
+          {currentView === 'app-disclaimer' && (
+            <DisclaimerView onNavigate={handleNavigate} />
+          )}
+
+          {(currentView === 'app-contact' || currentView === 'contact') && (
+            <ContactUsView onNavigate={handleNavigate} />
+          )}
         </main>
       </div>
-
-      {/* Global AI Infrastructure Advisor Drawer */}
-      <AiAdvisorDrawer
-        isOpen={isAiAdvisorOpen}
-        onClose={() => setIsAiAdvisorOpen(false)}
-        initialPrompt={advisorInitialPrompt}
-      />
     </div>
   );
 }

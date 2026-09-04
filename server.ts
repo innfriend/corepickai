@@ -332,79 +332,6 @@ app.post('/api/optimize', (req: Request, res: Response) => {
   }
 });
 
-
-// ----------------------------------------------------
-// AI Optimization Assistant & Insights API (Gemini Powered)
-// ----------------------------------------------------
-app.post('/api/ai/advisor', async (req: Request, res: Response) => {
-  const startTime = Date.now();
-  try {
-    const { modelName, targetHardware, userPrompt, contextData } = req.body;
-    const ai = getGenAI();
-
-    const systemInstruction = `You are CorePick AI Optimization Engine - an elite deep learning compiler and inference optimization engineer.
-You possess deep expertise in CUDA, TensorRT, Triton kernels, ONNX Runtime, OpenVINO, Qualcomm QNN/Hexagon, vLLM, Apple Metal/CoreML, quantization (AWQ, GPTQ, SmoothQuant, INT8 PTQ), and memory bandwidth roofline modeling.
-Provide actionable, mathematically rigorous, and production-ready recommendations for model optimization, kernel flamegraph analysis, operator fusions, and hardware selection. Keep advice concise, crisp, and high-impact.`;
-
-    if (!ai) {
-      // Smart simulated AI recommendations for local/preview mode
-      const latencyMs = Math.floor(Math.random() * 250) + 180;
-      const simulatedText = `### CorePick Optimization Analysis for **${modelName || 'Neural Model'}**
-
-#### 1. Hardware-to-Kernel Alignment Analysis
-- **Selected Target Cluster**: ${targetHardware || 'NVIDIA Tensor Core & Qualcomm NPU'}
-- **Memory Bandwidth vs Compute Bound**: The model shows high arithmetic intensity in dense layers, transitioning to a memory-bandwidth-bound state in normalization and attention projection steps.
-- **Roofline Position**: Operating at ~72% of theoretical HBM/GDDR bandwidth saturation.
-
-#### 2. Key Operator Bottlenecks & Fusion Opportunities
-- **Fused Layer Recommendation**: Fuse consecutive PointWise operators (\`Conv2D + BatchNorm + SiLU\` or \`QKV GEMM\`) to eliminate global memory roundtrips.
-- **Quantization Strategy**: Apply **INT8 Post-Training Quantization (PTQ)** with KL-divergence calibration for Vision backbones, or **INT4 AWQ / Marlin** for LLMs to reduce weight traffic by 75%.
-- **Zero-Copy Host I/O**: Ensure pinned page-locked memory buffers (\`cudaMallocHost\`) and asynchronous streams (\`cudaStreamCreateWithFlags\`) are utilized in the runtime harness.
-
-#### 3. Recommended Compiler Flags
-\`\`\`bash
-# Optimal TensorRT / QNN Build Configuration
-trtexec --onnx=${(modelName || 'model').toLowerCase().replace(/\\s+/g, '_')}.onnx \\
-  --saveEngine=optimized_engine.plan \\
-  --fp16 --int8 \\
-  --builderOptimizationLevel=5 \\
-  --workspace=4096MB \\
-  --profilingVerbosity=detailed
-\`\`\`
-
-*(Note: Connect your Gemini API Key in Settings to unlock real-time streaming LLM analysis)*`;
-
-      return res.json({
-        text: simulatedText,
-        latencyMs,
-        simulated: true,
-      });
-    }
-
-    const promptText = `Analyze optimization targets for model "${modelName || 'AI Model'}" targeting hardware "${targetHardware || 'NVIDIA & NPU Accelerators'}".
-User Question: "${userPrompt || 'How do I optimize this architecture for maximum throughput and minimum latency?'}"
-Context details: ${JSON.stringify(contextData || {})}`;
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: promptText,
-      config: {
-        systemInstruction,
-        temperature: 0.4,
-      },
-    });
-
-    res.json({
-      text: response.text || '',
-      latencyMs: Date.now() - startTime,
-      simulated: false,
-    });
-  } catch (error: any) {
-    console.error('CorePick AI Advisor Error:', error);
-    res.status(500).json({ error: error.message || 'AI Advisor failed' });
-  }
-});
-
 // ----------------------------------------------------
 // AI Code Generation API
 // ----------------------------------------------------
@@ -435,110 +362,22 @@ app.post('/api/ai/generate-code', async (req: Request, res: Response) => {
 });
 
 // ----------------------------------------------------
-// AI Infrastructure Advisor API
-// ----------------------------------------------------
-let advisorAiClient: any = null;
-function getAdvisorAiClient() {
-  if (!advisorAiClient && process.env.GEMINI_API_KEY) {
-    advisorAiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  }
-  return advisorAiClient;
-}
-
-app.post('/api/ai/advisor', async (req: Request, res: Response) => {
-  try {
-    const { userPrompt, modelName, targetHardware } = req.body;
-    if (!userPrompt) {
-      return res.status(400).json({ error: 'Prompt is required' });
-    }
-
-    const client = getAdvisorAiClient();
-    if (client) {
-      const prompt = `System: You are CorePick AI Infrastructure Advisor, an expert GPU performance engineer and deep learning compiler architect.
-Context: Model is "${modelName || 'General AI Model'}", Target Hardware is "${targetHardware || 'NVIDIA / AMD / Apple / Qualcomm'}".
-User Question: "${userPrompt}"
-
-Instructions:
-1. Provide an objective, highly technical, and concise answer.
-2. Address operational intensity (FLOPs/byte), memory bandwidth (GB/s), KV-cache overhead, and precision impact (FP16 vs FP8 vs INT4).
-3. State hardware tradeoffs clearly without marketing fluff.`;
-
-      const response = await client.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-      });
-
-      return res.json({ text: response.text });
-    }
-
-    // High-fidelity analytical fallback when API key is not yet set
-    const lower = userPrompt.toLowerCase();
-    let advice = '';
-
-    if (lower.includes('70b') || lower.includes('llama-3 70b')) {
-      advice = `### Infrastructure Recommendation for Llama-3 70B:
-
-1. **Recommended Hardware:**
-   * **Dual NVIDIA H100 SXM5 (80GB) with TP=2:** Delivers **110+ tok/s decode** with ~14ms ITL in FP8.
-   * **Single AMD Instinct MI300X (192GB):** Fits entire 70B model with full 32k KV-cache on a single socket without inter-GPU all-reduce latency penalty.
-   * **Single Blackwell B200 (192GB):** Highest throughput configuration with second-generation Transformer Engine (FP4/FP8).
-
-2. **Memory Footprint:**
-   * FP16: 140 GB weights + ~24 GB KV-cache (Requires TP=2 or TP=4).
-   * FP8: ~72 GB weights + 12 GB KV-cache (Fits on 1x 80GB GPU at limited batch size; optimal on TP=2).
-
-3. **Cost Optimization:**
-   * Switching from FP16 on 4x A100 to FP8 on 2x H100 cuts compute cost by **54%** while doubling throughput.`;
-    } else if (lower.includes('b200') || lower.includes('blackwell')) {
-      advice = `### NVIDIA Blackwell B200 vs H100 SXM5 Performance Analysis:
-
-* **Memory Bandwidth:** B200 provides **8.0 TB/s HBM3e** vs H100's **3.35 TB/s HBM3** (2.38x bandwidth increase). Because LLM autoregressive token decode is strictly memory-bandwidth bound (operational intensity ~1 FLOP/byte), decode throughput scales almost linearly with memory bandwidth.
-* **NVLink 5:** 1.8 TB/s bidirectional bandwidth per GPU (2x over H100 NVLink 4), minimizing all-reduce bubble during Tensor Parallelism.
-* **FP4 Inference Support:** Introduces native micro-tensor 4-bit floating point, doubling effective compute density and halving weight memory footprint.`;
-    } else if (lower.includes('fp8') || lower.includes('quantiz')) {
-      advice = `### FP8 Quantization Impact Analysis:
-
-1. **Memory Bandwidth Relief:**
-   * Reduces memory traffic per decoded token from 2 bytes (FP16) to 1 byte (FP8). Decode speed doubles on memory-bound workloads.
-2. **VRAM Footprint:**
-   * Cuts weight memory by exactly 50%, freeing substantial VRAM for larger KV-cache batch sizes (increasing concurrent user capacity by 2.5-3x).
-3. **Accuracy Tradeoff:**
-   * Perplexity increase is negligible (<0.15% across standard benchmarks like GSM8K and MMLU) when using delayed scaling and FP8 E4M3 for weights and activations.`;
-    } else if (lower.includes('memory') || lower.includes('bandwidth')) {
-      advice = `### Understanding Memory-Bandwidth vs Compute Bound:
-
-* **Prefill Phase (Prompt Processing):** Compute-bound. Operates with large matrix-matrix multiplications (GEMM) where arithmetic intensity is high (~50-150 FLOPs/byte). Scales with GPU Tensor Core TFLOPs.
-* **Decode Phase (Token Generation):** Memory-bandwidth bound. Every newly generated token requires fetching all model weights (140 GB for a 70B FP16 model) from HBM into SRAM to process just 1 token per stream (arithmetic intensity ~1 FLOP/byte).
-* **Mitigations:**
-  1. Increase batch size to amortize weight fetches across multiple requests.
-  2. Compress weights to FP8 or INT4.
-  3. Adopt Speculative Decoding (EAGLE / Medusa) to generate 2-4 tokens per weight fetch.`;
-    } else {
-      advice = `### CorePick Architectural Assessment:
-
-* **Workload Archetype:** For interactive LLM serving, prioritize accelerators with high memory bandwidth (e.g. H100 SXM5 3.35 TB/s, B200 8.0 TB/s, or MI300X 5.3 TB/s).
-* **Precision Recommendation:** Standardize on FP8 (E4M3) for modern Hopper/Blackwell/MI300 hardware. It offers near-zero perplexity loss with 1.8-2.2x throughput improvements.
-* **Continuous Batching:** Ensure vLLM or TensorRT-LLM is deployed with PagedAttention and chunked prefill enabled to prevent prefill latency spikes from stalling active decode streams.`;
-    }
-
-    res.json({ text: advice });
-  } catch (err: any) {
-    console.error('Advisor API Error:', err);
-    res.status(500).json({ error: err.message || 'AI Advisor failed to process query' });
-  }
-});
-
-// ----------------------------------------------------
 // Contact Us & Inquiries API (Dispatches to innfriend1@gmail.com)
 // ----------------------------------------------------
 const PRIMARY_CONTACT_RECIPIENT = process.env.CONTACT_RECIPIENT_EMAIL || 'innfriend1@gmail.com';
 
 interface ContactInquiry {
   id: string;
+  formCategory?: 'benchmark_profiling' | 'enterprise_finops' | string;
   name: string;
   email: string;
   company?: string;
+  role?: string;
   hardwareInterest?: string;
+  modelInterest?: string;
+  workloadScale?: string;
+  deploymentEnv?: string;
+  timeline?: string;
   subject: string;
   message: string;
   inquiryType?: string;
@@ -552,10 +391,16 @@ const contactInquiries: ContactInquiry[] = [];
 app.post('/api/contact', async (req: Request, res: Response) => {
   try {
     const {
+      formCategory = 'benchmark_profiling',
       name,
       email,
       company = '',
+      role = '',
       hardwareInterest = 'General Inference Acceleration',
+      modelInterest = '',
+      workloadScale = '',
+      deploymentEnv = '',
+      timeline = '',
       subject = 'CorePick AI Inquiry',
       message,
       inquiryType = 'general',
@@ -565,13 +410,20 @@ app.post('/api/contact', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Name, email, and message are required fields.' });
     }
 
-    const inquiryId = `INQ-${Date.now().toString().slice(-6)}`;
+    const prefix = formCategory === 'enterprise_finops' ? 'FIN' : 'BENCH';
+    const inquiryId = `${prefix}-${Date.now().toString().slice(-6)}`;
     const newInquiry: ContactInquiry = {
       id: inquiryId,
+      formCategory,
       name,
       email,
       company,
+      role,
       hardwareInterest,
+      modelInterest,
+      workloadScale,
+      deploymentEnv,
+      timeline,
       subject,
       message,
       inquiryType,
@@ -585,10 +437,15 @@ app.post('/api/contact', async (req: Request, res: Response) => {
     // Primary Dispatch Log & Notification Stream
     console.log(`====================================================`);
     console.log(`[COREPICK DISPATCH] INCOMING CONTACT INQUIRY #${inquiryId}`);
+    console.log(`Form Set: ${formCategory === 'enterprise_finops' ? 'Set 2: Enterprise Sizing & FinOps' : 'Set 1: Benchmark & Custom Silicon'}`);
     console.log(`Destination Mailbox: ${PRIMARY_CONTACT_RECIPIENT}`);
-    console.log(`Sender: ${name} <${email}> (${company || 'N/A'})`);
+    console.log(`Sender: ${name} <${email}> (${company || 'N/A'}${role ? ` - ${role}` : ''})`);
     console.log(`Subject: ${subject}`);
-    console.log(`Hardware Target: ${hardwareInterest}`);
+    console.log(`Hardware / Fleet: ${hardwareInterest}`);
+    if (modelInterest) console.log(`Model Interest: ${modelInterest}`);
+    if (workloadScale) console.log(`Workload Scale: ${workloadScale}`);
+    if (deploymentEnv) console.log(`Deployment Target: ${deploymentEnv}`);
+    if (timeline) console.log(`Target Timeline: ${timeline}`);
     console.log(`Message Body: ${message}`);
     console.log(`Timestamp: ${newInquiry.createdAt}`);
     console.log(`====================================================`);
@@ -606,16 +463,21 @@ app.post('/api/contact', async (req: Request, res: Response) => {
             from: process.env.EMAIL_FROM || 'CorePick AI <onboarding@resend.dev>',
             to: [PRIMARY_CONTACT_RECIPIENT],
             reply_to: email,
-            subject: `[CorePick Inquiry] ${subject}`,
+            subject: `[CorePick ${formCategory === 'enterprise_finops' ? 'Enterprise Sizing' : 'Benchmark Request'}] ${subject}`,
             html: `
               <h2>New CorePick Contact Inquiry (#${inquiryId})</h2>
+              <p><strong>Form Category:</strong> ${formCategory === 'enterprise_finops' ? 'Enterprise Sizing & FinOps Consultation' : 'Benchmark & Hardware Profiling Request'}</p>
               <p><strong>Name:</strong> ${name}</p>
               <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-              <p><strong>Company:</strong> ${company || 'N/A'}</p>
-              <p><strong>Hardware Target:</strong> ${hardwareInterest}</p>
+              <p><strong>Company / Lab:</strong> ${company || 'N/A'} ${role ? `(${role})` : ''}</p>
+              <p><strong>Hardware / Target Fleet:</strong> ${hardwareInterest}</p>
+              ${modelInterest ? `<p><strong>Model / Precision Target:</strong> ${modelInterest}</p>` : ''}
+              ${workloadScale ? `<p><strong>Workload / Token Scale:</strong> ${workloadScale}</p>` : ''}
+              ${deploymentEnv ? `<p><strong>Environment:</strong> ${deploymentEnv}</p>` : ''}
+              ${timeline ? `<p><strong>Timeline:</strong> ${timeline}</p>` : ''}
               <p><strong>Subject:</strong> ${subject}</p>
               <hr/>
-              <h3>Message</h3>
+              <h3>Message / Technical Requirements</h3>
               <p style="white-space: pre-wrap;">${message}</p>
             `,
           }),
@@ -631,13 +493,19 @@ app.post('/api/contact', async (req: Request, res: Response) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             to: PRIMARY_CONTACT_RECIPIENT,
+            inquiryId,
+            formCategory,
             name,
             email,
             company,
+            role,
             hardwareInterest,
+            modelInterest,
+            workloadScale,
+            deploymentEnv,
+            timeline,
             subject,
             message,
-            inquiryId,
             timestamp: newInquiry.createdAt,
           }),
         });

@@ -19,10 +19,9 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianG
 
 interface ProductionMonitorViewProps {
   onNavigate: (view: string) => void;
-  onOpenAdvisor?: (prompt?: string) => void;
 }
 
-export const ProductionMonitorView: React.FC<ProductionMonitorViewProps> = ({ onNavigate, onOpenAdvisor }) => {
+export const ProductionMonitorView: React.FC<ProductionMonitorViewProps> = ({ onNavigate }) => {
   const [telemetryHistory, setTelemetryHistory] = useState([
     { time: '14:00', tps: 840, ttft: 110, vramPct: 68, rps: 18 },
     { time: '14:05', tps: 920, ttft: 115, vramPct: 70, rps: 22 },
@@ -57,13 +56,6 @@ export const ProductionMonitorView: React.FC<ProductionMonitorViewProps> = ({ on
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => onOpenAdvisor?.('How should I adjust my cluster to handle prompt length drift without causing OOM?')}
-              className="flex items-center gap-1.5 px-3 py-2 bg-[#131B2E] hover:bg-[#1E293B] text-cyan-300 text-xs font-mono rounded-xl border border-[#27354F] cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>Ask Advisor</span>
-            </button>
             <button
               onClick={() => onNavigate('app-optimizer')}
               className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-mono font-bold rounded-xl shadow-lg cursor-pointer"

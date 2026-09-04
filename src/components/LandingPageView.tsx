@@ -28,7 +28,8 @@ import {
   AlertTriangle,
   Database,
   Box,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Mail
 } from 'lucide-react';
 import { HARDWARE_CATALOG, MODEL_CATALOG } from '../data/mockData';
 import { MeasurementBadge } from './MeasurementBadge';
@@ -357,13 +358,80 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({ onNavigate }) 
         </div>
 
         {/* Technical Disclaimer Footer Banner */}
-        <div className="mt-12 max-w-5xl mx-auto p-4 rounded-xl bg-amber-950/20 border border-amber-800/40 text-xs text-amber-200/90 leading-relaxed flex items-start gap-3">
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-          <div>
-            <span className="font-bold text-amber-300 font-mono">Performance Disclaimer:</span> Performance estimates are analytical and may differ from actual results. Actual inference performance depends on model implementation, kernels, runtime, software versions, workload characteristics, system configuration and hardware utilization. Use CorePick Benchmark to validate results on target hardware.
+        <div className="mt-12 max-w-5xl mx-auto p-4 sm:p-5 rounded-2xl bg-amber-950/20 border border-amber-800/40 text-xs text-amber-200/90 leading-relaxed flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold text-amber-300 font-mono">Performance Disclaimer:</span> Performance estimates are analytical and may differ from actual results. Actual inference performance depends on model implementation, kernels, runtime, software versions, workload characteristics, and hardware utilization.
+            </div>
           </div>
+          <button
+            onClick={() => onNavigate('app-disclaimer')}
+            className="shrink-0 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 hover:text-white border border-amber-500/40 font-mono text-[11px] font-bold transition-all cursor-pointer"
+          >
+            Read Full Disclaimer →
+          </button>
         </div>
       </section>
+
+      {/* Global Site Footer */}
+      <footer className="w-full border-t border-[#1E293B] bg-[#05070B] py-8 sm:py-10 px-4 sm:px-6 lg:px-8 mt-12 select-none">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500 to-emerald-500 p-0.5">
+              <div className="w-full h-full bg-[#0A0D14] rounded-[6px] flex items-center justify-center">
+                <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+              </div>
+            </div>
+            <div>
+              <span className="font-mono font-bold text-white text-sm">CorePick AI</span>
+              <p className="text-[11px] text-slate-500">Hardware-Aware Inference & Profiling Platform</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs font-mono text-slate-400">
+            <button
+              onClick={() => onNavigate('contact')}
+              className="hover:text-cyan-400 transition-colors flex items-center gap-1 cursor-pointer text-cyan-400 font-semibold"
+            >
+              <Mail className="w-3.5 h-3.5" />
+              <span>Contact Us</span>
+            </button>
+            <span className="text-slate-700 hidden sm:inline">•</span>
+            <button
+              onClick={() => onNavigate('app-disclaimer')}
+              className="hover:text-amber-300 transition-colors cursor-pointer"
+            >
+              Benchmark Disclaimer
+            </button>
+            <span className="text-slate-700 hidden sm:inline">•</span>
+            <button
+              onClick={() => onNavigate('app-methodology')}
+              className="hover:text-white transition-colors cursor-pointer"
+            >
+              Methodology
+            </button>
+            <span className="text-slate-700 hidden sm:inline">•</span>
+            <button
+              onClick={() => onNavigate('docs')}
+              className="hover:text-white transition-colors cursor-pointer"
+            >
+              Documentation
+            </button>
+            <span className="text-slate-700 hidden sm:inline">•</span>
+            <button
+              onClick={() => onNavigate('app-optimizer')}
+              className="hover:text-white transition-colors cursor-pointer"
+            >
+              Optimizer
+            </button>
+          </div>
+
+          <div className="text-[11px] text-slate-500 font-mono text-center md:text-right">
+            © 2026 CorePick Architecture Systems
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

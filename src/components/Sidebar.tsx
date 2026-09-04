@@ -24,7 +24,9 @@ import {
   CheckCircle2,
   FileCode,
   Database,
-  Gauge
+  Gauge,
+  ShieldAlert,
+  Mail
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -88,6 +90,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { id: 'app-methodology', label: 'Formulas & Methodology', icon: Gauge, badge: 'Formulas' },
         { id: 'app-knowledge', label: 'Knowledge Base', icon: FileText, badge: 'Guide' },
         { id: 'app-cli', label: 'CLI & Local Agent', icon: Terminal },
+        { id: 'app-disclaimer', label: 'Metrics Disclaimer', icon: ShieldAlert, badge: 'Notice' },
+        { id: 'app-contact', label: 'Contact & Support', icon: Mail, badge: 'Support' },
       ]
     }
   ];

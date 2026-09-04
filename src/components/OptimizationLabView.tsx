@@ -21,7 +21,6 @@ import { MODEL_CATALOG, HARDWARE_CATALOG } from '../data/mockData';
 
 interface OptimizationLabViewProps {
   onNavigate: (view: string) => void;
-  onOpenAdvisor?: (prompt?: string) => void;
 }
 
 interface OptimizationTrial {
@@ -38,7 +37,7 @@ interface OptimizationTrial {
   status: 'ACCEPTED' | 'REJECTED' | 'TESTING';
 }
 
-export const OptimizationLabView: React.FC<OptimizationLabViewProps> = ({ onNavigate, onOpenAdvisor }) => {
+export const OptimizationLabView: React.FC<OptimizationLabViewProps> = ({ onNavigate }) => {
   const [selectedModelId, setSelectedModelId] = useState<string>('meta-llama-3-8b');
   const [selectedHardwareId, setSelectedHardwareId] = useState<string>('nvidia-h100-sxm');
 
@@ -151,13 +150,6 @@ export const OptimizationLabView: React.FC<OptimizationLabViewProps> = ({ onNavi
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => onOpenAdvisor?.('How does speculative decoding improve decode throughput while preserving correctness?')}
-              className="flex items-center gap-1.5 px-3 py-2 bg-[#131B2E] hover:bg-[#1E293B] text-cyan-300 text-xs font-mono rounded-xl border border-[#27354F] cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>Ask Advisor</span>
-            </button>
             <button
               onClick={() => onNavigate('app-optimizer')}
               className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-mono font-bold rounded-xl shadow-lg cursor-pointer"

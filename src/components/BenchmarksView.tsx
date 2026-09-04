@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BarChart3, Search, Download, CheckCircle2, Zap, ArrowRight, ShieldCheck } from 'lucide-react';
 import { SAMPLE_OPTIMIZATION_JOBS, HARDWARE_CATALOG, MODEL_CATALOG } from '../data/mockData';
+import { BenchmarkDisclaimerSection } from './BenchmarkDisclaimerSection';
 
 interface BenchmarksViewProps {
   onNavigate: (view: string) => void;
@@ -262,6 +263,9 @@ export const BenchmarksView: React.FC<BenchmarksViewProps> = ({ onNavigate }) =>
             </tbody>
           </table>
         </div>
+
+        {/* Global Benchmark & Performance Metrics Disclaimer Section */}
+        <BenchmarkDisclaimerSection onNavigate={onNavigate} className="mt-8" />
       </div>
     </div>
   );

@@ -43,17 +43,16 @@ import {
 } from '../types';
 import { runOptimizationSearch } from '../simulation/performanceEngine';
 import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, Tooltip, CartesianGrid, Cell } from 'recharts';
+import { BenchmarkDisclaimerSection } from './BenchmarkDisclaimerSection';
 
 interface UnifiedOptimizerViewProps {
   onNavigate: (view: string) => void;
   onSelectForDeployment?: (config: CandidateConfiguration) => void;
-  onOpenAdvisor?: (prompt?: string) => void;
 }
 
 export const UnifiedOptimizerView: React.FC<UnifiedOptimizerViewProps> = ({ 
   onNavigate, 
-  onSelectForDeployment,
-  onOpenAdvisor 
+  onSelectForDeployment
 }) => {
   // ----------------------------------------------------
   // Step 1: Model Selection State
@@ -344,13 +343,6 @@ export const UnifiedOptimizerView: React.FC<UnifiedOptimizerViewProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => onOpenAdvisor?.(`What is the optimal infrastructure setup for ${activeModel.name} under ${workload.presetName || 'this workload'}?`)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-cyan-600/20 to-indigo-600/20 hover:from-cyan-600/30 hover:to-indigo-600/30 text-cyan-300 text-xs font-mono font-semibold rounded-xl border border-cyan-500/40 transition-all cursor-pointer shadow-sm"
-            >
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>Ask AI Advisor</span>
-            </button>
             <button
               onClick={() => applyWorkloadPreset('Interactive Chatbot')}
               className="flex items-center gap-1.5 px-3 py-2 bg-[#131B2E] hover:bg-[#1E293B] text-slate-300 hover:text-white text-xs font-mono rounded-xl border border-[#27354F] transition-colors cursor-pointer"
@@ -1243,6 +1235,9 @@ export const UnifiedOptimizerView: React.FC<UnifiedOptimizerViewProps> = ({
               </table>
             </div>
           </div>
+
+          {/* Sizing & Performance Metrics Disclaimer Section */}
+          <BenchmarkDisclaimerSection onNavigate={onNavigate} className="mt-8" />
 
         </div>
       </div>

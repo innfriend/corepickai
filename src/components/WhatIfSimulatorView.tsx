@@ -23,13 +23,13 @@ import { HARDWARE_CATALOG, MODEL_CATALOG } from '../data/mockData';
 import { HardwareProfile, ModelWorkload, PrecisionType, RuntimeEngine } from '../types';
 import { simulateInference, explainPerformanceDelta } from '../simulation/performanceEngine';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceDot } from 'recharts';
+import { BenchmarkDisclaimerSection } from './BenchmarkDisclaimerSection';
 
 interface WhatIfSimulatorViewProps {
   onNavigate: (view: string) => void;
-  onOpenAdvisor?: (prompt?: string) => void;
 }
 
-export const WhatIfSimulatorView: React.FC<WhatIfSimulatorViewProps> = ({ onNavigate, onOpenAdvisor }) => {
+export const WhatIfSimulatorView: React.FC<WhatIfSimulatorViewProps> = ({ onNavigate }) => {
   // Global Model Selection
   const [selectedModelId, setSelectedModelId] = useState<string>('meta-llama-3-8b');
   const activeModel = useMemo(() => {
@@ -182,13 +182,6 @@ export const WhatIfSimulatorView: React.FC<WhatIfSimulatorViewProps> = ({ onNavi
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => onOpenAdvisor?.(`Why does changing precision or batch size affect ${activeModel.name} decode latency?`)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-[#131B2E] hover:bg-[#1E293B] text-cyan-300 text-xs font-mono rounded-xl border border-[#27354F] cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>Ask Advisor</span>
-            </button>
             <button
               onClick={() => onNavigate('app-optimizer')}
               className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-mono font-bold rounded-xl shadow-lg cursor-pointer"
@@ -547,6 +540,9 @@ export const WhatIfSimulatorView: React.FC<WhatIfSimulatorViewProps> = ({ onNavi
             </div>
           </div>
         </div>
+
+        {/* Global Benchmark & Performance Metrics Disclaimer Section */}
+        <BenchmarkDisclaimerSection onNavigate={onNavigate} className="mt-8" />
 
       </div>
     </div>

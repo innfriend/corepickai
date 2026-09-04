@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Cpu, Zap, Activity, BookOpen, Layers, DollarSign, Terminal, Shield, ArrowRight, Server, Search, HelpCircle, Menu, X, PanelLeft, Sparkles } from 'lucide-react';
+import { Cpu, Zap, Activity, BookOpen, Layers, DollarSign, Terminal, Shield, ArrowRight, Server, Search, HelpCircle, Menu, X, PanelLeft, Mail } from 'lucide-react';
 
 interface NavbarProps {
   currentView: string;
@@ -7,7 +7,6 @@ interface NavbarProps {
   onOpenCommandPalette?: () => void;
   onOpenGlossary?: () => void;
   onToggleMobileSidebar?: () => void;
-  onOpenAdvisor?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
@@ -16,7 +15,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCommandPalette,
   onOpenGlossary,
   onToggleMobileSidebar,
-  onOpenAdvisor
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isAppView = currentView.startsWith('app-') || currentView === 'admin';
@@ -31,6 +29,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'app-opt-lab', label: 'Lab' },
     { id: 'app-monitor', label: 'Monitor' },
     { id: 'docs', label: 'Docs' },
+    { id: 'contact', label: 'Contact' },
   ];
 
   const handleMobileNavClick = (id: string) => {
@@ -127,21 +126,21 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Plain English Glossary */}
           <button
             onClick={onOpenGlossary}
-            className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 bg-[#0D1322] hover:bg-[#131B2E] text-slate-300 hover:text-cyan-300 text-xs font-mono rounded-xl border border-[#1E293B] transition-colors cursor-pointer"
+            className="hidden lg:flex items-center gap-1 px-2.5 py-1.5 bg-[#0D1322] hover:bg-[#131B2E] text-slate-300 hover:text-cyan-300 text-xs font-mono rounded-xl border border-[#1E293B] transition-colors cursor-pointer"
             title="Plain-English HPC Glossary"
           >
             <HelpCircle className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="hidden md:inline">Glossary</span>
+            <span className="hidden xl:inline">Glossary</span>
           </button>
 
-          {/* AI Advisor Button */}
+          {/* Performance Disclaimer Quick Link */}
           <button
-            onClick={onOpenAdvisor}
-            className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 bg-gradient-to-r from-cyan-950/80 to-indigo-950/80 hover:from-cyan-900 hover:to-indigo-900 text-cyan-300 hover:text-white text-xs font-mono rounded-xl border border-cyan-800/60 transition-all cursor-pointer shadow-sm"
-            title="Ask AI Infrastructure Advisor"
+            onClick={() => onNavigate('app-disclaimer')}
+            className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 bg-amber-950/30 hover:bg-amber-950/60 text-amber-300 hover:text-amber-200 text-xs font-mono rounded-xl border border-amber-800/50 transition-colors cursor-pointer"
+            title="Benchmark & Performance Sizing Disclaimer"
           >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            <span className="hidden sm:inline font-semibold">AI Advisor</span>
+            <Shield className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden md:inline">Disclaimer</span>
           </button>
 
           {/* Quick Launch Wizard */}
@@ -219,6 +218,28 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <HelpCircle className="w-3.5 h-3.5 text-cyan-400" />
               <span>HPC Engineering Glossary</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                onNavigate('contact');
+              }}
+              className="flex items-center justify-center gap-2 w-full py-2 bg-[#0D1322] border border-[#1E293B] rounded-xl text-xs text-slate-300 font-mono"
+            >
+              <Mail className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Contact Engineering & Sales</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                onNavigate('app-disclaimer');
+              }}
+              className="flex items-center justify-center gap-2 w-full py-2 bg-amber-950/30 border border-amber-800/50 rounded-xl text-xs text-amber-300 font-mono"
+            >
+              <Shield className="w-3.5 h-3.5 text-amber-400" />
+              <span>Performance & Benchmark Disclaimer</span>
             </button>
 
             <button

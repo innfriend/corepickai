@@ -17,7 +17,8 @@ import {
   DollarSign,
   ChevronRight,
   Mail,
-  Server
+  Server,
+  ShieldAlert
 } from 'lucide-react';
 import { MODEL_CATALOG, HARDWARE_CATALOG } from '../data/mockData';
 
@@ -134,6 +135,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       category: 'Help',
       icon: BookOpen,
       action: () => { onClose(); if (onOpenGlossary) onOpenGlossary(); }
+    },
+    {
+      id: 'quick-disclaimer',
+      title: 'Benchmark & Performance Metrics Disclaimer (Sizing & Non-Liability Notice)',
+      category: 'Help',
+      icon: ShieldAlert,
+      action: () => { onNavigate('app-disclaimer'); onClose(); }
     },
     {
       id: 'quick-contact',
