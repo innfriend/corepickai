@@ -45,17 +45,17 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({ onNavigate }) 
 
   const sampleHws = [
     {
-      tabLabel: 'NVIDIA RTX 4090',
-      name: 'NVIDIA GeForce RTX 4090 (24GB GDDR6X)',
-      vendor: 'NVIDIA',
-      type: 'Workstation GPU',
-      latencyLabel: '~2.34 ms',
-      throughputLabel: '~427 FPS',
-      powerLabel: '~195 W (Estimated)',
-      costLabel: '$0.48 / 1M',
-      provenance: 'ESTIMATED' as const,
-      relativePerf: '~2.4× over CPU baseline',
-      badge: 'Workstation Cost-Perf',
+      tabLabel: 'Intel Gaudi 3',
+      name: 'Intel Gaudi 3 AI Accelerator (128GB HBM2e)',
+      vendor: 'Intel',
+      type: 'Data Center Accelerator',
+      latencyLabel: '~1.18 ms',
+      throughputLabel: '~847 FPS',
+      powerLabel: '~310 W (Estimated)',
+      costLabel: '$0.93 / 1M',
+      provenance: 'CALIBRATED_ESTIMATE' as const,
+      relativePerf: '1.8 PFLOPS FP8 • 24x 200GbE RoCE',
+      badge: 'High Cost-Efficiency ($2.85/hr)',
     },
     {
       tabLabel: 'NVIDIA H100',
@@ -69,6 +69,45 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({ onNavigate }) 
       provenance: 'MEASURED' as const,
       relativePerf: 'Measured 4.9× vs A100',
       badge: 'High Throughput',
+    },
+    {
+      tabLabel: 'AMD MI300X',
+      name: 'AMD Instinct MI300X (192GB HBM3)',
+      vendor: 'AMD',
+      type: 'Data Center GPU',
+      latencyLabel: '~1.08 ms',
+      throughputLabel: '~925 FPS',
+      powerLabel: '~360 W',
+      costLabel: '$1.42 / 1M',
+      provenance: 'CALIBRATED_ESTIMATE' as const,
+      relativePerf: 'Massive 192GB VRAM',
+      badge: '192GB HBM3 Capacity',
+    },
+    {
+      tabLabel: 'Intel Xeon AMX',
+      name: 'Intel Xeon Platinum 8592+ (w/ Intel AMX)',
+      vendor: 'Intel',
+      type: 'Server CPU w/ Matrix Accelerator',
+      latencyLabel: '~14.20 ms',
+      throughputLabel: '~70.4 FPS',
+      powerLabel: '~210 W (Package)',
+      costLabel: '$0.75 / 1M (CPU Serving)',
+      provenance: 'MEASURED' as const,
+      relativePerf: 'Hardware AMX BF16 / INT8 Acceleration',
+      badge: 'GPU-Free Enterprise CPU Serving',
+    },
+    {
+      tabLabel: 'NVIDIA RTX 4090',
+      name: 'NVIDIA GeForce RTX 4090 (24GB GDDR6X)',
+      vendor: 'NVIDIA',
+      type: 'Workstation GPU',
+      latencyLabel: '~2.34 ms',
+      throughputLabel: '~427 FPS',
+      powerLabel: '~195 W (Estimated)',
+      costLabel: '$0.48 / 1M',
+      provenance: 'ESTIMATED' as const,
+      relativePerf: '~2.4× over CPU baseline',
+      badge: 'Workstation Cost-Perf',
     },
     {
       tabLabel: 'Apple M3 Max',
@@ -95,19 +134,6 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({ onNavigate }) 
       provenance: 'ESTIMATED' as const,
       relativePerf: 'Ultra-Low Power',
       badge: 'Edge Copilot+ NPU',
-    },
-    {
-      tabLabel: 'AMD MI300X',
-      name: 'AMD Instinct MI300X (192GB HBM3)',
-      vendor: 'AMD',
-      type: 'Data Center GPU',
-      latencyLabel: '~1.08 ms',
-      throughputLabel: '~925 FPS',
-      powerLabel: '~360 W',
-      costLabel: '$1.42 / 1M',
-      provenance: 'CALIBRATED_ESTIMATE' as const,
-      relativePerf: 'Massive 192GB VRAM',
-      badge: '192GB HBM3 Capacity',
     }
   ];
 
@@ -281,8 +307,11 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({ onNavigate }) 
                 <h3 className="text-base font-bold text-white font-mono">Hardware Inference Performance Explorer</h3>
                 <MeasurementBadge status={activeHw.provenance} size="sm" />
               </div>
-              <p className="text-xs text-slate-400 mt-1">
-                Model: <strong>YOLOv8x (Detection)</strong> • Resolution: 640x640 • Active: <strong className="text-cyan-300">{activeHw.name}</strong>
+              <p className="text-xs text-slate-400 mt-1 flex flex-wrap items-center gap-1.5">
+                <span>Model: <strong>YOLOv8x (Detection)</strong> • Resolution: 640x640</span>
+                <span>• Active: <strong className="text-cyan-300">{activeHw.name}</strong></span>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyan-950/60 text-cyan-300 border border-cyan-800/50 font-bold">{activeHw.vendor}</span>
+                <span className="text-slate-500 text-[11px] font-mono">({activeHw.type})</span>
               </p>
             </div>
 
@@ -348,12 +377,20 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({ onNavigate }) 
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span>{activeHw.relativePerf}</span>
             </div>
-            <button
-              onClick={() => onNavigate('app-results')}
-              className="text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1.5 cursor-pointer"
-            >
-              <span>Explore Pareto Frontier & Bottlenecks →</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-4">
+              <button
+                onClick={() => onNavigate('app-fleet')}
+                className="text-slate-400 hover:text-cyan-300 flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <span>Explore Full Silicon Fleet (Intel, NVIDIA, AMD, etc.) →</span>
+              </button>
+              <button
+                onClick={() => onNavigate('app-results')}
+                className="text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>Explore Pareto Frontier →</span>
+              </button>
+            </div>
           </div>
         </div>
 
